@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.medicoDoctor.R
 import com.example.medicoDoctor.data.repositories.LoginRepo
 import com.example.medicoDoctor.ui.home.HomeActivity
 import com.example.medicoDoctor.utils.sharedPrefFile
+import com.example.medicoDoctor.R
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -19,22 +19,23 @@ class LoginActivity : AppCompatActivity() {
 
         loginButton.setOnClickListener {
 
-            val tel = tel.text.toString()
+            val telS = tel.text.toString()
             val password = pwd.text.toString()
 
-            if (tel.isEmpty()) {
-                /*TODO Email.error = "Email Required"
-                Email.requestFocus()
-                return@setOnClickListener*/
+
+            if (telS.length<10 || !telS.matches(Regex("(06|05|07)[0-9]{8}"))) {
+                tel.error = "numéro invalide"
+                tel.requestFocus()
+                return@setOnClickListener
             }
             if (password.isEmpty()) {
-               /*TODO Pass.error = "Password Required"
-                Pass.requestFocus()
-                return@setOnClickListener*/
+                pwd.error = "Champs obligatoire"
+                pwd.requestFocus()
+                return@setOnClickListener
             }
 
             var loginRepo = LoginRepo.Companion
-            loginRepo.login(this, tel, password)
+            loginRepo.login(this, telS, password)
 
         }
     }
@@ -43,7 +44,6 @@ class LoginActivity : AppCompatActivity() {
         val sharedPref = this.getSharedPreferences(
             sharedPrefFile, Context.MODE_PRIVATE
         )
-
         val con = sharedPref.getBoolean("connected",false)
         if (con){
             val intent = Intent(this, HomeActivity::class.java)
